@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#1B4B8F">
+<title>连小理 · 新生AI成长领航员</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="avatar.png">
+<link rel="apple-touch-icon" href="avatar.png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{--navy:#1B4B8F;--navy2:#2E6BB8;--org:#E07B2C;--org2:#C9620F;--bg:#F4F6FA;--ink:#1A1F2B;--sub:#8A94A6;}
+html,body{height:100%;}
+body{
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);
+  color:var(--ink);max-width:480px;margin:0 auto;display:flex;flex-direction:column;height:100vh;
+  overflow:hidden;user-select:none;
+}
+.page{display:none;flex:1;flex-direction:column;min-height:0;}
+.page.on{display:flex;}
+.hd{padding:16px 18px 12px;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;flex:0 0 auto;}
+.hd h1{font-size:18px;font-weight:700;}
+.hd p{font-size:11.5px;opacity:.85;margin-top:3px;}
+.bd{flex:1;overflow-y:auto;padding:0 14px 12px;-webkit-overflow-scrolling:touch;}
+.tab{
+  flex:0 0 58px;display:flex;border-top:1px solid #EDF0F5;background:#fff;padding-bottom:env(safe-area-inset-bottom);
+}
+.tab button{
+  flex:1;border:none;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:10px;color:#A3ACBD;gap:3px;cursor:pointer;
+}
+.tab button.on{color:var(--navy);font-weight:700;}
+.tab .dot{width:20px;height:20px;border-radius:6px;background:#E3E8F0;position:relative;}
+.tab button.on .dot{background:var(--navy);}
+.card{background:#fff;border:1px solid #E8ECF3;border-radius:14px;padding:12px 13px;margin-top:10px;box-shadow:0 2px 6px rgba(27,75,143,.05);}
+.sec{font-size:13px;font-weight:700;margin:14px 2px 8px;display:flex;justify-content:space-between;align-items:center;}
+.sec em{font-style:normal;font-size:11px;color:var(--sub);font-weight:400;}
+.btn{display:inline-block;font-size:12px;padding:8px 14px;border-radius:20px;background:var(--navy);color:#fff;font-weight:600;border:none;cursor:pointer;}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid #C3D3EC;}
+.btn.sm{font-size:11px;padding:6px 11px;}
+.btn:active{opacity:.75;}
+/* 播报条 */
+.bcast{
+  margin-top:12px;background:linear-gradient(120deg,#FFF6EE,#FFEFE2);border:1px solid #FFD9B8;border-radius:14px;
+  padding:12px;display:flex;gap:9px;box-shadow:0 4px 12px rgba(224,123,44,.16);position:relative;
+}
+.bcast .bulb{font-size:17px;}
+.bcast p{font-size:12px;color:#7A4A18;line-height:1.55;}
+.bcast p b{color:var(--org2);}
+.bcast .acts{margin-top:8px;display:flex;gap:8px;}
+.bcast .x{
+  position:absolute;top:6px;right:10px;color:#D9A87C;font-size:14px;cursor:pointer;padding:4px;
+}
+/* 时间轴 */
+.tl{position:relative;padding-left:20px;margin-top:4px;}
+.tl:before{content:"";position:absolute;left:5px;top:8px;bottom:8px;width:2px;background:#E3E9F2;}
+.tl .it{position:relative;padding:7px 0;}
+.tl .it:before{content:"";position:absolute;left:-19px;top:13px;width:8px;height:8px;border-radius:50%;background:#C3D3EC;border:2px solid #fff;box-shadow:0 0 0 1px #C3D3EC;}
+.tl .it.hi:before{background:var(--org);box-shadow:0 0 0 1px var(--org);}
+.tl .t{font-size:11px;color:var(--sub);font-weight:600;}
+.tl .n{font-size:13px;font-weight:600;margin-top:1px;}
+.tl .l{font-size:11px;color:var(--sub);margin-top:1px;}
+.tl .it.hi .n{color:var(--org2);}
+/* 聊天 */
+.chat{display:flex;flex-direction:column;gap:12px;padding-top:12px;}
+.row{display:flex;gap:8px;align-items:flex-start;}
+.row.me{flex-direction:row-reverse;}
+.av{width:30px;height:30px;border-radius:50%;flex:0 0 30px;background:url(avatar.png) center/cover no-repeat,#1B4B8F;border:2px solid #fff;box-shadow:0 2px 6px rgba(27,75,143,.35);}
+.av.me{background:linear-gradient(135deg,#E3E8F0,#CBD5E3);color:#5A6577;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;box-shadow:none;border:none;}
+.bub{max-width:76%;font-size:12.5px;line-height:1.6;padding:10px 12px;border-radius:14px;background:#F3F6FA;border-top-left-radius:4px;white-space:pre-wrap;word-break:break-word;}
+.row.me .bub{background:var(--navy);color:#fff;border-radius:14px;border-top-right-radius:4px;}
+.bub b{color:var(--navy);}
+.row.me .bub b{color:#FFD9B8;}
+.cite{margin-top:8px;padding-top:7px;border-top:1px dashed #D5DCE7;font-size:10.5px;color:#7A8698;}
+.chip{display:inline-block;font-size:10.5px;font-weight:700;color:var(--navy);background:#EAF1FB;border:1px solid #D5E1F2;border-radius:9px;padding:5px 9px;margin:5px 4px 0 0;}
+/* 小目标 */
+.goaltag{font-size:13px;font-weight:700;margin:14px 2px 8px;display:flex;justify-content:space-between;align-items:center;}
+.goaltag em{font-style:normal;font-size:10.5px;color:#2E9E63;font-weight:600;}
+.goal{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #E8ECF3;border-radius:12px;padding:9px 11px;margin-bottom:8px;}
+.goal .when{flex:0 0 auto;font-size:10px;font-weight:700;padding:5px 8px;border-radius:8px;background:#EAF1FB;color:var(--navy);line-height:1.35;text-align:center;}
+.goal .what{font-size:12px;font-weight:600;flex:1;min-width:0;line-height:1.4;}
+.goal .st{font-size:10px;color:#2E9E63;font-weight:700;flex:0 0 auto;cursor:pointer;padding:4px;}
+.goal.pend .st{color:var(--org2);}
+/* 录入 */
+.fld{margin-top:10px;}
+.fld label{font-size:11.5px;font-weight:700;color:var(--ink);display:block;margin-bottom:5px;}
+.fld input,.fld select,.fld textarea{
+  width:100%;border:1.5px solid #E3E9F2;border-radius:10px;padding:9px 11px;font-size:12.5px;font-family:inherit;background:#fff;outline:none;
+}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--navy);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.pillrow{display:flex;gap:7px;flex-wrap:wrap;}
+.pill{font-size:11.5px;padding:7px 13px;border-radius:18px;background:#fff;border:1.5px solid #E3E9F2;color:#6B7688;cursor:pointer;font-weight:600;}
+.pill.on{background:var(--navy);border-color:var(--navy);color:#fff;}
+/* 日历 */
+.ev{background:#fff;border:1px solid #E8ECF3;border-radius:13px;padding:11px 12px;margin-top:9px;border-left:4px solid var(--navy);}
+.ev .nm{font-size:13.5px;font-weight:700;}
+.ev .meta{font-size:11px;color:var(--sub);margin-top:4px;}
+.ev .why{font-size:11px;color:#5A6577;margin-top:7px;background:#F7F9FC;border-radius:8px;padding:7px 9px;line-height:1.5;}
+.ev .why b{color:var(--navy);}
+.filters{display:flex;gap:7px;padding-top:12px;flex-wrap:wrap;}
+.filters span{font-size:11px;padding:5px 11px;border-radius:18px;background:#fff;border:1px solid #E3E9F2;color:#6B7688;cursor:pointer;}
+.filters span.on{background:var(--navy);color:#fff;font-weight:600;}
+/* STAR */
+.st{display:flex;gap:10px;background:#fff;border:1px solid #E8ECF3;border-radius:12px;padding:11px 12px;margin-top:9px;}
+.st .lt{flex:0 0 24px;height:24px;border-radius:7px;background:#EAF1FB;color:var(--navy);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+.st.ok .lt{background:#E8F7EF;color:#2E9E63;}
+.st h5{font-size:12px;font-weight:700;}
+.st p{font-size:11px;color:#6B7688;margin-top:2px;line-height:1.5;word-break:break-word;}
+.resume .rh{background:var(--navy);color:#fff;padding:9px 13px;font-size:11.5px;font-weight:700;display:flex;justify-content:space-between;border-radius:13px 13px 0 0;}
+.resume .rb{padding:11px 13px;}
+.resume .rl{font-size:11.5px;color:#5A6577;line-height:1.8;}
+.resume .rl b{color:var(--ink);}
+.resume .new{background:#FFF6EE;border-left:3px solid var(--org);padding:7px 9px;border-radius:0 7px 7px 0;font-size:11px;color:#7A4A18;margin-top:8px;}
+.done-banner{background:linear-gradient(135deg,#2E9E63,#3FB877);color:#fff;border-radius:14px;padding:12px;margin-top:12px;display:flex;align-items:center;gap:10px;}
+.done-banner b{font-size:13px;display:block;}
+.done-banner span{font-size:11px;opacity:.9;}
+/* 雷达 */
+.ring{width:120px;height:120px;border-radius:50%;margin:8px auto;position:relative;background:conic-gradient(var(--navy) 0turn var(--p,0.3turn),#E8ECF3 var(--p,0.3turn) 1turn);display:flex;align-items:center;justify-content:center;}
+.ring .in{width:92px;height:92px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ring .in b{font-size:25px;color:var(--navy);font-weight:800;line-height:1;}
+.ring .in span{font-size:10px;color:var(--sub);margin-top:3px;}
+.gi{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #E8ECF3;border-radius:11px;padding:10px 12px;margin-top:8px;}
+.gi .dot{flex:0 0 8px;height:8px;border-radius:50%;background:#2E9E63;}
+.gi.miss .dot{background:#D14343;}
+.gi .nm{font-size:12px;font-weight:600;flex:1;}
+.gi .lv{font-size:10px;color:var(--sub);}
+.gi .fix{font-size:10px;color:var(--navy);background:#EAF1FB;padding:3px 9px;border-radius:12px;font-weight:800;border:1px solid #D5E1F2;}
+.adv{background:linear-gradient(120deg,#EAF1FB,#F5F8FC);border:1px solid #D5E1F2;border-radius:12px;padding:11px 12px;font-size:11.5px;color:#2C4A78;line-height:1.6;margin-top:10px;}
+.adv b{color:var(--navy);}
+/* 输入条 */
+.inputbar{
+  flex:0 0 auto;display:flex;gap:8px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #EDF0F5;
+}
+.inputbar input{flex:1;border:1.5px solid #E3E9F2;border-radius:21px;padding:10px 14px;font-size:12.5px;outline:none;font-family:inherit;}
+.inputbar input:focus{border-color:var(--navy);}
+.inputbar button{
+  width:42px;height:42px;border-radius:50%;border:none;background:var(--navy);color:#fff;font-size:16px;cursor:pointer;flex:0 0 42px;
+}
+.empty{color:#C3CBD8;font-size:11.5px;text-align:center;padding:10px;}
+.toast{
+  position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#1A1F2B;color:#fff;font-size:12px;
+  padding:9px 16px;border-radius:20px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:99;white-space:nowrap;
+}
+.toast.show{opacity:.92;}
+.kw{font-size:10px;color:var(--sub);text-align:center;padding:6px 0 2px;}
+.kw b{color:var(--navy);cursor:pointer;font-weight:600;}
+.op{font-size:11px;font-weight:700;padding:4px 9px;border-radius:12px;cursor:pointer;white-space:nowrap;flex:0 0 auto;}
+.op.done{color:#2E9E63;background:#E8F7EF;border:1px solid #BFE6D0;}
+.op.del{color:#D14343;background:#FDECEC;border:1px solid #F2C7C7;}
+</style>
+</head>
+<body>
+
+<!-- ================= 首页 ================= -->
+<div class="page on" id="p-home">
+  <div class="hd"><h1 id="greet">早上好 👋</h1><p id="hometip">你的学业军师已就位</p></div>
+  <div class="bd">
+    <div class="bcast" id="bcast">
+      <span class="x" onclick="closeBcast()">✕</span>
+      <div class="bulb">💡</div>
+      <div>
+        <p><b>下周三「挑战杯」校赛报名截止</b>，这符合你的「<span class="bg-goal">保研</span>」目标（A类竞赛·综测加分），记得去填表哦！</p>
+        <div class="acts"><span class="btn sm" onclick="addFromBcast()">加入日程</span><span class="btn sm ghost" onclick="closeBcast()">稍后再说</span></div>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div style="background:linear-gradient(135deg,#1B4B8F,#2E6BB8);color:#fff;padding:10px 13px;font-size:12px;font-weight:700;display:flex;justify-content:space-between;align-items:center;">
+        <span>📩 通知解析 · 群消息转待办</span><span style="font-size:10px;font-weight:400;opacity:.85;">微信/QQ 复制粘贴 · Android 可直接分享</span>
+      </div>
+      <div style="padding:11px 13px;">
+        <textarea id="f-notice" rows="2" placeholder="把群里的通知粘贴到这里，如：下周三下午两点交综测材料到书院办公室，带成绩单～" style="width:100%;border:1.5px solid #E3E9F2;border-radius:10px;padding:9px 11px;font-size:12px;font-family:inherit;resize:none;outline:none;"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <span class="btn sm" onclick="parseNoticeInput()">⚡ 生成待办</span>
+          <span class="btn sm ghost" onclick="$('f-notice').value=''">清空</span>
+        </div>
+        <div id="parseOut"></div>
+      </div>
+    </div>
+
+    <div class="sec">今日时间轴 <em id="today"></em></div>
+    <div class="tl" id="tl"></div>
+    <div class="card" id="growmini" style="display:flex;gap:10px;align-items:center;"></div>
+  </div>
+</div>
+
+<!-- ================= 军师 ================= -->
+<div class="page" id="p-chat">
+  <div class="hd"><h1>连小理 · 军师面板</h1><p>你的学业军师，随时提问</p></div>
+  <div class="bd" id="chatbd">
+    <div class="chat" id="chat"></div>
+    <div id="goalbox"></div>
+  </div>
+  <div class="kw">试试：<b onclick="ask('我想保研，大一需要准备什么？')">保研怎么准备</b> · <b onclick="ask('综测怎么算？')">综测怎么算</b> · <b onclick="ask('我想拿奖学金，大一该干嘛？')">拿奖学金</b></div>
+  <div class="inputbar">
+    <input id="q" placeholder="问问连小理…" onkeydown="if(event.key==='Enter')send()">
+    <button onclick="send()">➤</button>
+  </div>
+</div>
+
+<!-- ================= 日历 ================= -->
+<div class="page" id="p-cal">
+  <div class="hd"><h1>竞赛日历</h1><p>按你的目标排序 · 数据以官方通知为准</p></div>
+  <div class="bd">
+    <div class="filters">
+      <span class="on">全部</span><span>保研加分</span><span>就业导向</span><span>志愿服务</span>
+    </div>
+    <div id="evs"></div>
+  </div>
+</div>
+
+<!-- ================= 档案 ================= -->
+<div class="page" id="p-arch">
+  <div class="hd"><h1>经历资产化</h1><p>做完的事，自动长成简历</p></div>
+  <div class="bd">
+    <div id="starlist"></div>
+    <div class="sec">简历预览 <em id="resumePct"></em></div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div class="resume" style="border:none;">
+        <div class="rh"><span id="rname">林某某 · 个人简历</span><span id="rmatch"></span></div>
+        <div class="rb"><div class="rl" id="resume"></div><div class="new" id="rnew"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 我的（录入中心） ================= -->
+<div class="page" id="p-me">
+  <div class="hd"><h1>数据录入 · 我的起点档案</h1><p>喂给连小理的第一份数据</p></div>
+  <div class="bd">
+    <div class="sec">我的目标 <em>供竞赛日历与求职雷达使用</em></div>
+    <div class="pillrow" id="goalpills"></div>
+    <div class="grid2" style="margin-top:10px;">
+      <div class="fld"><label>专业</label><input id="f-major" placeholder="如：计算机类"></div>
+      <div class="fld"><label>意向岗位</label><input id="f-job" placeholder="如：软件开发（应届）"></div>
+    </div>
+    <div class="sec">培养方案 <em>军师规划的知识来源</em></div>
+    <div class="card" style="display:flex;gap:9px;align-items:center;border-style:dashed;cursor:pointer;" onclick="$('plancam').click()">
+      <div style="width:34px;height:34px;border-radius:10px;background:#EAF1FB;display:flex;align-items:center;justify-content:center;font-size:16px;">📄</div>
+      <div style="flex:1;"><div style="font-size:12px;font-weight:700;">拍照上传培养方案</div><div style="font-size:10px;color:var(--sub);margin-top:2px;">AI 转录全文后，军师规划时会依据它</div></div>
+      <div id="planstat" style="font-size:10px;font-weight:700;color:#2E9E63;"></div>
+    </div>
+    <input type="file" id="plancam" accept="image/*" capture="environment" style="display:none" onchange="onPlanCam(event)">
+    <div class="card">
+      <div class="fld" style="margin-top:0;"><label>或手动粘贴培养方案文字</label>
+      <textarea id="f-plan" rows="3" placeholder="从教务系统/培养方案 PDF 复制文字粘贴到这里"></textarea></div>
+      <span class="btn sm" onclick="pastePlan()">保存文字版</span>
+      <span class="btn sm ghost" onclick="delPlan()" style="color:#D14343;border-color:#F2C7C7;">删除</span>
+    </div>
+
+    <div class="sec">课表录入 <em>手动添加 · 或拍照识别</em></div>
+    <div class="card" style="display:flex;gap:9px;align-items:center;border-style:dashed;cursor:pointer;" onclick="$('cam').click()">
+      <div style="width:34px;height:34px;border-radius:10px;background:#EAF1FB;display:flex;align-items:center;justify-content:center;font-size:16px;">📷</div>
+      <div><div style="font-size:12px;font-weight:700;">拍照上传课表</div><div style="font-size:10px;color:var(--sub);margin-top:2px;" id="camtip">配置 AI 后可自动识别课程；未配置则保存照片</div></div>
+    </div>
+    <input type="file" id="cam" accept="image/*" capture="environment" style="display:none" onchange="onCam(event)">
+    <div class="card">
+      <div class="grid2">
+        <div class="fld" style="margin-top:0;"><label>星期</label>
+          <select id="f-day"><option value="1">周一</option><option value="2">周二</option><option value="3">周三</option><option value="4">周四</option><option value="5">周五</option></select>
+        </div>
+        <div class="fld" style="margin-top:0;"><label>课程名</label><input id="f-cname" placeholder="如：高等数学 A"></div>
+      </div>
+      <div class="grid2">
+        <div class="fld"><label>时间</label><input id="f-ctime" placeholder="08:00-09:40"></div>
+        <div class="fld"><label>地点</label><input id="f-cplace" placeholder="主教 M101"></div>
+      </div>
+      <span class="btn" onclick="addCourse()">＋ 添加课程</span>
+    </div>
+    <div id="courses"></div>
+    <div class="sec">AI 接入设置 <em>可选 · 默认本地知识库</em></div>
+    <div class="card">
+      <div class="fld" style="margin-top:0;"><label>API 端点（OpenAI 兼容）</label><input id="f-ep" placeholder="https://open.bigmodel.cn/api/paas/v4"></div>
+      <div class="grid2">
+        <div class="fld"><label>模型</label><input id="f-model" placeholder="glm-4-flash"></div>
+        <div class="fld"><label>API Key</label><input id="f-key" placeholder="填入你的 Key" type="password"></div>
+      </div>
+      <div style="font-size:10px;color:var(--sub);line-height:1.6;margin:4px 0 8px;">
+        免费推荐：智谱 glm-4-flash（bigmodel.cn 注册即得）；亦支持 DeepSeek / 硅基流动等 OpenAI 兼容端点。Key 仅存本机。
+      </div>
+      <span class="btn" onclick="saveAI()">保存并连接</span>
+      <span class="btn ghost" onclick="clearAI()">断开</span>
+    </div>
+    <div class="sec">数据管理</div>
+    <span class="btn ghost" onclick="saveProfile()">保存个人资料</span>
+    <span class="btn ghost" onclick="resetAll()" style="color:#D14343;border-color:#F2C7C7;">清空全部数据</span>
+    <div style="height:16px;"></div>
+  </div>
+</div>
+
+<div class="tab">
+  <button class="on" data-p="p-home"><span class="dot"></span>首页</button>
+  <button data-p="p-chat"><span class="dot"></span>军师</button>
+  <button data-p="p-cal"><span class="dot"></span>日历</button>
+  <button data-p="p-arch"><span class="dot"></span>档案</button>
+  <button data-p="p-me"><span class="dot"></span>我的</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= 状态 ================= */
+const KEY='lxl_v1';
+const DEF={
+  profile:{goal:'保研',major:'计算机类',job:'软件开发工程师（应届）',name:'林某某'},
+  courses:[
+    {day:1,name:'高等数学 A',time:'08:00-09:40',place:'主教 M101'},
+    {day:1,name:'思想道德与法治',time:'14:00-15:40',place:'综合教学 2 号楼'},
+    {day:3,name:'大学英语（一）',time:'10:05-11:45',place:'综合楼 B203'},
+    {day:3,name:'程序设计基础上机',time:'19:00-20:40',place:'信息楼 A308'},
+    {day:4,name:'体育（一）',time:'16:00-17:00',place:'中心体育馆'}
+  ],
+  tasks:[
+    {time:'14:00',name:'填写挑战杯报名表',place:'来自竞赛日历 · 截止 10.29',hi:true,done:false},
+    {time:'16:30',name:'迎新志愿活动 行前会',place:'伯川书院 六舍活动室',hi:false,done:false}
+  ],
+  goals:[
+    {when:'今晚 19:30',what:'通读《综测办法》第三章',st:1},
+    {when:'周六 09:00',what:'参加迎新志愿服务活动',st:1},
+    {when:'11.05 截止',what:'报名数学建模校赛（综测加分）',st:0}
+  ],
+  chat:[],stars:[],bcast:1
+};
+let S;try{S=JSON.parse(localStorage.getItem(KEY))||null}catch(e){S=null}
+if(!S||!S.profile)S=JSON.parse(JSON.stringify(DEF));
+S.ai=S.ai||{endpoint:'https://open.bigmodel.cn/api/paas/v4',model:'glm-4-flash',key:''};
+const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
+const $=id=>document.getElementById(id);
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);}
+
+/* ================= Tab ================= */
+document.querySelectorAll('.tab button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab button').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');$(b.dataset.p).classList.add('on');render();
+});
+
+/* ================= 首页 ================= */
+function closeBcast(){S.bcast=0;save();render();}
+function doneTask(i){
+  const t=S.tasks[i];if(!t)return;
+  t.done=true;
+  if(!S.goals.some(g=>g.what===t.name))S.goals.unshift({when:'已完成',what:t.name,st:1});
+  save();render();toast('已完成 ✓ 去「档案」页做 STAR 复盘');
+}
+function delTask(i){
+  const t=S.tasks[i];if(!t)return;
+  S.tasks.splice(i,1);save();render();toast('已移除：'+(t.name||''));
+}
+function addFromBcast(){
+  S.tasks.unshift({time:'明天 09:00',name:'挑战杯组队+联系指导老师',place:'来自「连小理播报」',hi:true,done:false});
+  S.bcast=0;save();toast('已加入日程 ✓');render();
+}
+function renderHome(){
+  const h=new Date().getHours();
+  $('greet').textContent=(h<6?'夜深了':h<12?'早上好':h<14?'中午好':h<18?'下午好':'晚上好')+'，'+S.profile.name.replace(' · 个人简历','')+' 👋';
+  $('hometip').textContent='目标：'+S.profile.goal+' · '+S.profile.major;
+  $('today').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'});
+  document.querySelectorAll('.bg-goal').forEach(e=>e.textContent=S.profile.goal);
+  $('bcast').style.display=S.bcast?'flex':'none';
+  const now=new Date(),wd=(now.getDay()+6)%7||7,d=String(now.getDate()).padStart(2,'0');
+  let items=[];
+  S.courses.filter(c=>+c.day===wd).forEach(c=>items.push({k:'c',time:c.time.split('-')[0],name:c.name,place:c.place,hi:false}));
+  S.tasks.forEach((t,ti)=>{if(!t.done)items.push({k:'t',ti:ti,time:t.time,name:t.name,place:t.place,hi:t.hi})});
+  items.sort((a,b)=>a.time.localeCompare(b.time));
+  $('tl').innerHTML=items.map(function(i){
+    const ops=i.k==='t'?'<div style="flex:0 0 auto;display:flex;gap:5px;"><span class="op done" onclick="doneTask('+i.ti+')">✓ 完成</span><span class="op del" onclick="delTask('+i.ti+')">✕</span></div>':'';
+    return '<div class="it'+(i.hi?' hi':'')+'" style="display:flex;justify-content:space-between;align-items:center;gap:6px;"><div style="min-width:0;flex:1;"><div class="t">'+i.time+'</div><div class="n">'+i.name+'</div><div class="l">'+i.place+'</div></div>'+ops+'</div>';
+  }).join('')||'<div class="empty">今天没有安排，去军师面板聊聊？</div>';
+  const pct=Math.min(95,38+S.stars.length*14);
+  $('growmini').innerHTML='<div style="font-size:16px;">📈</div><div><p style="font-size:11.5px;color:#2C4A78;line-height:1.5;">已沉淀 <b style="color:var(--navy);">'+S.stars.length+' 段经历</b> · 简历完成度 <b style="color:var(--navy);">'+pct+'%</b><br>下一段经历，从参加一场比赛开始。</p></div>';
+}
+
+/* ---- 通知解析：群消息 → 待办 ---- */
+function parseNotice(t){
+  t=t.replace(/\s+/g,' ');
+  const r={time:'',name:'',place:'',hi:false};
+  // 时间：周X / 今天明天后天 / 具体日期
+  const wk=t.match(/周([一二三四五六日])/);
+  const rel=t.match(/(今天|明天|后天)/);
+  const dt=t.match(/(\d{1,2})[月.](\d{1,2})/);
+  const hm=t.match(/(\d{1,2})[:：点](\d{1,2})?/);
+  const tp=[];
+  if(wk)tp.push('周'+wk[1]);
+  if(rel)tp.push(rel[1]);
+  if(dt)tp.push(dt[1]+'月'+dt[2]+'日');
+  if(hm)tp.push(hm[1]+':'+(hm[2]||'00'));
+  r.time=tp.join(' ')||'时间待定';
+  // 地点
+  const pl=t.match(/[一-龥A-Za-z0-9]{2,10}(?:楼|室|厅|广场|食堂|中心|馆|办公室|操场)/);
+  if(pl)r.place=pl[0];
+  // 事项：含动作关键词的片段
+  const act=t.match(/[一-龥、A-Za-z0-9]{2,18}(?:截止|报名|提交|上交|开会|活动|讲座|考试|比赛|材料|证明|打卡)/g);
+  if(act&&act.length){r.name=act[0].replace(/^[^一-龥A-Za-z0-9]+/,'').slice(0,16);}
+  else{r.name=t.replace(/[@＃#\[\]]/g,'').slice(0,16);}
+  if(/截止|之前|前交/.test(t))r.hi=true;
+  return r;
+}
+function addNoticeTask(r,fromShare){
+  S.tasks.unshift({time:r.time,name:r.name,place:(r.place?'📍 '+r.place:fromShare?'来自分享':'来自粘贴'),hi:r.hi,done:false});
+  save();render();
+  $('parseOut').innerHTML='<div class="adv" style="margin-top:9px;">✅ 已解析：<b>'+r.name+'</b>（'+r.time+(r.place?' · '+r.place:'')+'）<br>已同步至任务看板，可在上方时间轴查看。</div>';
+  toast('已生成待办 ✓');
+}
+function parseNoticeInput(){
+  const v=$('f-notice').value.trim();
+  if(!v){toast('先粘贴一条通知');return;}
+  addNoticeTask(parseNotice(v),false);
+}
+/* 系统分享接收（Android：微信/QQ → 分享 → 连小理） */
+(function(){
+  try{
+    const sp=new URLSearchParams(location.search);
+    const t=(sp.get('shared')||'')+(sp.get('url')||'');
+    if(t&&t.trim()){
+      document.querySelectorAll('.tab button')[0].click();
+      setTimeout(function(){
+        $('f-notice').value=t.trim();
+        parseNoticeInput();
+      },300);
+    }
+  }catch(e){}
+})();
+
+/* ================= 军师（规则引擎模拟手册RAG） ================= */
+const KB=[
+ {k:['保研','推免','研究生'],a:'根据《推荐免试研究生实施办法》，推免综合考量学业成绩与加分项。\n\n大一路线建议：保持绩点前列、尽早参加 A 类竞赛、大二前联系导师进组。\n\n你本周就可以做的两件事我已标记在下面 👇',chips:['📚 保持绩点','🏆 参加 A 类竞赛','🔬 尽早进实验室'],cite:'📘 依据：《推荐免试研究生实施办法》· 具体比例以当年文件为准',goals:[{when:'本周内',what:'查学院前三年推免细则并收藏',st:0},{when:'本月',what:'联系 1 位专业老师了解进组要求',st:0}]},
+ {k:['综测','综合测评','奖学金','加分'],a:'根据《本科生综合素质测评办法》第三章，综合测评由学业成绩与课外实践两部分构成，实践部分包含志愿服务与学科竞赛。\n\n你的突破口：',chips:['📚 保持绩点','🤝 尽早参加志愿服务','🏆 打学科竞赛攒实践分'],cite:'📘 依据：《综合素质测评办法》第三章 ·《学生手册》P42',goals:[{when:'今晚 19:30',what:'通读《综测办法》第三章',st:1},{when:'周六 09:00',what:'参加迎新志愿服务活动',st:1},{when:'11.05 截止',what:'报名数学建模校赛（综测加分）',st:0}]},
+ {k:['学分','培养方案','选课','毕业'],a:'根据你的培养方案（'+S.profile.major+'），毕业学分由通识教育、学科基础、专业教育、实践环节四部分构成。\n\n我可以帮你把培养方案和课表比对：到「我的」页录入课程，我会检查学分结构缺口。',chips:['📋 录入课表','✅ 比对学分结构'],cite:'📘 依据：'+S.profile.major+'培养方案（2026 版）',goals:[{when:'今天',what:'到「我的」页录入本学期课表',st:0}]},
+ {k:['竞赛','比赛','数模','挑战杯','大创'],a:'按你的「'+S.profile.goal+'」目标，推荐优先级：\n① 挑战杯校赛（10.29 报名截止，A 类竞赛）\n② 数学建模校赛（11.05 截止报名）\n③ 大创项目（明年 3-4 月申报，现在可先联系导师）\n\n点击「日历」页查看完整竞赛日历。',chips:['🏆 挑战杯校赛','📐 数学建模校赛','🔬 大创项目'],cite:'📘 依据：校团委年度竞赛清单 · 以当年官方通知为准',goals:[{when:'下周三前',what:'完成挑战杯报名',st:0},{when:'11.05 前',what:'组好数模队并报名',st:0}]},
+ {k:['就业','找工作','实习','岗位','简历'],a:'你的意向岗位是「'+S.profile.job+'」。\n\n求职雷达显示（档案页可查看）：匹配度取决于项目经历与技能栈。现在最有效的动作是把每一次课程项目都按 STAR 沉淀进档案。',chips:['📄 去「档案」页沉淀经历','📡 查看求职雷达'],cite:'📘 依据：智联招聘同类岗位 JD 关键词统计',goals:[{when:'本周',what:'把 1 个课程项目写入 STAR 档案',st:0}]},
+ {k:['课表','课程','上课时间'],a:'你本周有 '+S.courses.length+' 门课已录入。今天（周'+['日','一','二','三','四','五','六'][new Date().getDay()]+'）的课程我已同步到首页时间轴。\n\n新增或修改课程请到「我的」页录入。',chips:['📋 管理课表'],cite:'📘 数据来源：你在录入中心提供的课表',goals:[]}
+];
+const FALLBACK='这个问题《新生手册》没有直接覆盖，给你通用建议：\n\n先定目标（保研/考研/就业），再把大目标拆成本学期可执行的小目标。具体政策类问题建议再查一次官方文件，或到「军师」面板换个问法。';
+
+/* ---- 真模型接入（OpenAI 兼容接口；未配置 Key 时自动走本地知识库） ---- */
+function sysPrompt(){
+  let p='你是「连小理」，大连理工大学2026级新生的AI成长领航员，热情、专业、像学长学姐。用户目标：'+S.profile.goal+'，专业：'+S.profile.major+'，意向岗位：'+S.profile.job+'。\n\n规则：\n1. 涉及学校政策（综测/保研/学分）的回答必须提示"以学校官方文件为准"，不得编造具体数字与条款；\n2. 结合用户目标给出可执行建议；\n3. 回答末尾用「📌 本周小目标」列出1-3条带时间的行动项；\n4. 结构化、简洁、多用鼓励语气。';
+  if(S.planText){
+    p+='\n\n【用户已上传本人培养方案全文，回答学分/选课/学期规划问题时必须优先依据以下方案，并注明"根据你的培养方案"】\n'+S.planText.slice(0,4000);
+  }
+  return p;
+}
+async function callAI(userText, withImage){
+  const ep=S.ai.endpoint.replace(/\/+$/,'');
+  const msgs=[{role:'system',content:sysPrompt()},{role:'user',content:userText}];
+  const r=await fetch(ep+'/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+S.ai.key},
+    body:JSON.stringify({model:S.ai.model,messages:msgs,temperature:0.6})
+  });
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  const d=await r.json();
+  return d.choices[0].message.content;
+}
+
+function addMsg(role,html,cite){S.chat.push({role,html,cite});save();renderChat();}
+function send(){const v=$('q').value.trim();if(!v)return;$('q').value='';ask(v);}
+async function ask(q){
+  addMsg('me',q.replace(/</g,'&lt;'));
+  if(S.ai&&S.ai.key){
+    try{
+      const txt=await callAI(q);
+      addMsg('ai',txt.replace(/&/g,'&amp;').replace(/</g,'&lt;'),'🤖 '+S.ai.model+' · 政策类内容请以学校官方文件为准');
+      renderGoals();$('chatbd').scrollTop=99999;return;
+    }catch(e){
+      addMsg('ai','⚠️ AI 接口调用失败（'+(e.message||'网络/跨域错误')+'），已切换为内置知识库回答。可在「我的」页检查 Key 或端点。',null);
+    }
+  }
+  const hit=KB.find(e=>e.k.some(k=>q.includes(k)));
+  setTimeout(()=>{
+    if(hit){
+      let h=hit.a+(hit.chips.length?'\n':'')+hit.chips.map(c=>'<span class="chip">'+c+'</span>').join('');
+      addMsg('ai',h,hit.cite);
+      if(hit.goals.length){S.goals=hit.goals;save();}
+    }else{
+      addMsg('ai',FALLBACK,'📘 手册未涵盖 · 以上为通用建议');
+    }
+    renderGoals();$('chatbd').scrollTop=99999;
+  },450);
+}
+function toggleGoal(i){S.goals[i].st=S.goals[i].st?0:1;save();renderGoals();toast(S.goals[i].st?'已加入日程 ✓':'已设为待办');}
+function renderChat(){
+  $('chat').innerHTML=S.chat.map(m=>'<div class="row'+(m.role==='me'?' me':'')+'"><div class="av'+(m.role==='me'?' me':'')+'">'+(m.role==='me'?'我':'')+'</div><div class="bub">'+m.html+(m.cite?'<div class="cite">'+m.cite+'</div>':'')+'</div></div>').join('');
+  $('chatbd').scrollTop=99999;
+}
+function renderGoals(){
+  $('goalbox').innerHTML=S.goals.length?('<div class="goaltag">📌 本周小目标 <em>对话完毕，已自动标记</em></div>'+S.goals.map((g,i)=>'<div class="goal'+(g.st?'':' pend')+'"><div class="when">'+g.when+'</div><div class="what">'+g.what+'</div><div class="st" onclick="toggleGoal('+i+')">'+(g.st?'✓ 已排入':'⏳ 待办提醒')+'</div></div>').join('')):'';
+}
+
+/* ================= 日历 ================= */
+const EVS=[
+ {nm:'「挑战杯」校赛',meta:'A 类竞赛 · 报名截止 10.29',why:'校级 A 类赛事，<b>推免加分认可度高</b>，且你已具备参赛能力。'},
+ {nm:'数学建模校赛',meta:'校级 · 报名 11.05 截止 · 12 月比赛',why:'团队赛，<b>可跨专业组队</b>；获奖直接计入综测实践分。'},
+ {nm:'大创项目申报',meta:'校级/省级 · 次年 3-4 月申报',why:'想保研进组，<b>大创是最低门槛的科研入口</b>。'},
+ {nm:'蓝桥杯程序设计大赛',meta:'国家级 · 省赛次年 4 月 · 报名 12 月',why:'与你的<b>计算机类专业强相关</b>。'}
+];
+function renderCal(){
+  $('evs').innerHTML=EVS.map(e=>'<div class="ev"><div class="nm">'+e.nm+'</div><div class="meta">'+e.meta+'</div><div class="why">推荐理由：'+e.why+'</div>'+
+   '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">'+
+   '<span class="btn sm" onclick="window.open(\'https://www.baidu.com/s?wd=\'+encodeURIComponent(\''+e.nm+' 报名 大连理工大学\'))">🔍 搜报名通知</span>'+
+   '<span class="btn sm ghost" onclick="window.open(\'https://www.saikr.com/search?search=\'+encodeURIComponent(\''+e.nm.replace(/[「」]/g,'')+'\'))">赛氪网</span>'+
+   '</div></div>').join('');
+}
+
+/* ================= 档案（STAR） ================= */
+function renderArch(){
+  const done=S.stars.length;
+  $('starlist').innerHTML=
+    '<div class="sec">可沉淀事项 <em>点击完成后做 STAR 复盘</em></div>'+
+    S.goals.map((g,i)=>'<div class="gi" style="'+(g.st?'':'opacity:.55')+'"><span class="dot" style="background:'+(g.st?'#2E9E63':'#C3CBD8')+'"></span><span class="nm">'+g.what+'</span><span class="fix" style="cursor:pointer;" onclick="doStar('+i+')">'+(S.stars.some(s=>s.gi===i)?'✓ 已沉淀':'完成 → STAR')+'</span></div>').join('')+
+    '<div class="sec">STAR 成长档案 <em>'+done+' 条</em></div>'+
+    S.stars.map((s,i)=>'<div class="st ok"><div class="lt">★</div><div style="flex:1;min-width:0;"><h5>'+s.title+'</h5><p><b>S</b> '+s.s+'　<b>T</b> '+s.t+'<br><b>A</b> '+s.a+'<br><b>R</b> '+s.r+'</p></div><span style="color:#D14343;font-size:12px;cursor:pointer;" onclick="delStar('+i+')">✕</span></div>').join('');
+  const pct=Math.min(95,38+done*14);
+  $('resumePct').textContent='完成度 '+pct+'%';
+  $('rname').textContent=S.profile.name+' · 个人简历';
+  $('rmatch').textContent='匹配度 '+Math.min(96,52+done*11)+'%';
+  $('resume').innerHTML=
+    '<b>教育背景</b>　大连理工大学 · '+S.profile.major+' · 2026 级<br>'+
+    '<b>目标方向</b>　'+S.profile.goal+' / '+S.profile.job+'<br>'+
+    '<b>项目·竞赛经历</b>　'+(done?S.stars.map(s=>s.title).join('；'):'— 待沉淀 —')+'<br>'+
+    '<b>技能</b>　Python / C 语言 / 数据分析';
+  $('rnew').textContent=done?('✨ 最新素材：'+S.stars[S.stars.length-1].title+'（已写入档案）'):'完成上方事项后，经历将自动汇总到这里。';
+}
+function doStar(i){
+  const g=S.goals[i];
+  const title=prompt('这段经历叫什么？（如：迎新志愿服务 / 数学建模校赛）',g.what.replace(/（.*）/,''));
+  if(title===null)return;
+  const s=prompt('S · 情境：什么时候？什么背景？','2026 年 10 月，'+g.when);
+  if(s===null)return;
+  const t=prompt('T · 任务：你负责什么？','负责核心执行与协调');
+  if(t===null)return;
+  const a=prompt('A · 行动：具体做了什么？用了什么方法？','按既定流程执行，主动解决突发问题');
+  if(a===null)return;
+  const r=prompt('R · 结果：量化成果（人数/时长/名次/产出）？','顺利完成，获得好评');
+  if(r===null)return;
+  S.stars.push({gi:i,title:title||g.what,s:s,t:t,a:a,r:r});
+  S.goals[i].st=1;save();render();toast('已写入成长档案 ✓');
+}
+function delStar(i){S.stars.splice(i,1);save();render();}
+
+/* ================= 我的 ================= */
+const GOALS=['保研','考研','就业','出国'];
+function renderMe(){
+  $('goalpills').innerHTML=GOALS.map(g=>'<span class="pill'+(S.profile.goal===g?' on':'')+'" onclick="setGoal(\''+g+'\')">'+g+'</span>').join('');
+  $('f-major').value=S.profile.major;$('f-job').value=S.profile.job;
+  $('f-ep').value=S.ai.endpoint;$('f-model').value=S.ai.model;$('f-key').value=S.ai.key;
+  $('camtip').textContent=S.ai.key?('已连接 '+S.ai.model+'，拍照即可自动识别课程'):'配置 AI 后可自动识别课程；未配置则保存照片';
+  $('planstat').textContent=S.planText?('✓ 已学习 '+S.planText.length+' 字'):'';
+  if(S.planText)$('f-plan').value=S.planText.slice(0,500)+(S.planText.length>500?'…':'');
+  const wd=['','周一','周二','周三','周四','周五'];
+  $('courses').innerHTML='<div class="sec">已录入课程 <em>'+S.courses.length+' 门</em></div>'+
+    S.courses.map((c,i)=>'<div class="gi"><span class="dot" style="background:var(--navy);"></span><span class="nm">'+wd[c.day]+' · '+c.name+'</span><span class="lv">'+c.time+' '+c.place+'</span><span style="color:#D14343;font-size:12px;cursor:pointer;" onclick="delCourse('+i+')">✕</span></div>').join('');
+}
+function setGoal(g){S.profile.goal=g;save();render();toast('目标已设为「'+g+'」');}
+function saveProfile(){S.profile.major=$('f-major').value||'未填写';S.profile.job=$('f-job').value||'未填写';save();render();toast('已保存 ✓');}
+function addCourse(){
+  const name=$('f-cname').value.trim();if(!name){toast('填一下课程名');return;}
+  S.courses.push({day:$('f-day').value,name:name,time:$('f-ctime').value||'时间未定',place:$('f-cplace').value||''});
+  $('f-cname').value='';$('f-ctime').value='';$('f-cplace').value='';
+  save();render();toast('课程已录入 ✓');
+}
+function delCourse(i){S.courses.splice(i,1);save();render();}
+
+/* ---- AI 配置 ---- */
+function saveAI(){
+  S.ai.endpoint=$('f-ep').value.trim()||'https://open.bigmodel.cn/api/paas/v4';
+  S.ai.model=$('f-model').value.trim()||'glm-4-flash';
+  S.ai.key=$('f-key').value.trim();
+  save();
+  if(S.ai.key){
+    callAI('用一句话介绍你自己').then(t=>toast('已连接：'+S.ai.model+' ✓')).catch(e=>toast('连接失败：'+(e.message||'跨域/网络')));
+  }else{toast('已保存（未填 Key，使用本地知识库）');}
+}
+function clearAI(){S.ai.key='';save();render();toast('已断开，使用本地知识库');}
+
+/* ---- 培养方案：OCR 转全文 → 注入军师记忆 ---- */
+async function onPlanCam(ev){
+  const f=ev.target.files[0];if(!f)return;
+  if(!(S.ai&&S.ai.key)){toast('请先在下方配置 AI Key，才能识别文字');return;}
+  const rd=new FileReader();
+  rd.onload=async function(){
+    const b64=rd.result.split(',')[1];
+    toast('正在转录培养方案…');
+    try{
+      const ep=S.ai.endpoint.replace(/\/+$/,'');
+      const visionModel=S.ai.model.includes('v')?S.ai.model:'glm-4v-flash';
+      const r=await fetch(ep+'/chat/completions',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+S.ai.key},
+        body:JSON.stringify({model:visionModel,messages:[{role:'user',content:[
+          {type:'text',text:'请把这张大学培养方案/教学计划图片中的所有文字完整转录出来，保持原有结构（课程类别、学分、学期安排等），不要遗漏、不要总结'},
+          {type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64}}
+        ]}],temperature:0})
+      });
+      const d=await r.json();
+      const txt=d.choices[0].message.content.trim();
+      if(txt.length>100){
+        S.planText=txt;save();render();toast('培养方案已学习 ✓（'+txt.length+' 字）');
+      }else{toast('识别内容过少，请重拍或手动粘贴');}
+    }catch(e){toast('识别失败，可改用下方手动粘贴');}
+  };
+  rd.readAsDataURL(f);
+  ev.target.value='';
+}
+function pastePlan(){
+  const v=$('f-plan').value.trim();
+  if(v.length<20){toast('内容太短，请粘贴完整培养方案');return;}
+  S.planText=v;save();render();toast('培养方案已保存 ✓');
+}
+function delPlan(){S.planText='';save();render();toast('已删除培养方案');}
+
+/* ---- 课表拍照：提取课程录入 ---- */
+async function onCam(ev){
+  const f=ev.target.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=async function(){
+    const b64=rd.result.split(',')[1];
+    S.photo='data:image/jpeg;base64,'+b64;save();
+    if(S.ai&&S.ai.key){
+      toast('识别中…');
+      try{
+        const ep=S.ai.endpoint.replace(/\/+$/,'');
+        const visionModel=S.ai.model.includes('v')?S.ai.model:'glm-4v-flash';
+        const r=await fetch(ep+'/chat/completions',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':'Bearer '+S.ai.key},
+          body:JSON.stringify({model:visionModel,messages:[{role:'user',content:[
+            {type:'text',text:'这是一张大学课表或培养方案的照片。提取所有课程，输出纯JSON数组（不要markdown代码块）：[{"name":"课程名","day":1,"time":"08:00-09:40","place":"地点"}]，day为1-5表示周一到周五；若无法识别输出[]'},
+            {type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64}}
+          ]}],temperature:0})
+        });
+        const d=await r.json();
+        let txt=d.choices[0].message.content.trim();
+        txt=txt.replace(/```json|```/g,'').trim();
+        const arr=JSON.parse(txt.match(/\[[\s\S]*\]/)[0]);
+        if(arr.length){
+          let n=0;
+          arr.forEach(c=>{if(c.name){S.courses.push({day:Math.min(5,Math.max(1,+c.day||1)),name:String(c.name).slice(0,20),time:c.time||'时间待定',place:c.place||''});n++;}});
+          save();render();toast('已识别并录入 '+n+' 门课程 ✓');return;
+        }
+        toast('未识别到课程，已保存照片，请手动录入');
+      }catch(e){toast('识别失败，已保存照片，请手动录入');}
+    }else{
+      toast('照片已保存 ✓ 配置 AI 后可自动识别');
+    }
+  };
+  rd.readAsDataURL(f);
+  ev.target.value='';
+}
+function resetAll(){if(confirm('确定清空全部数据？此操作不可恢复。')){localStorage.removeItem(KEY);location.reload();}}
+
+/* ================= 渲染入口 ================= */
+function render(){renderHome();renderChat();renderGoals();renderCal();renderArch();renderMe();}
+render();
+</script>
+</body>
+</html>

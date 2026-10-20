@@ -1,0 +1,16 @@
+{
+  "name": "连小理 · 新生AI成长领航员",
+  "short_name": "连小理",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F4F6FA",
+  "theme_color": "#1B4B8F",
+  "icons": [
+    { "src": "avatar.png", "sizes": "256x256", "type": "image/png" }
+  ],
+  "share_target": {
+    "action": "./index.html",
+    "method": "GET",
+    "params": { "title": "title", "text": "shared", "url": "url" }
+  }
+}
